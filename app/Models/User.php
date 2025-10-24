@@ -33,6 +33,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+
     /**
      * Get the attributes that should be cast.
      *
@@ -44,5 +45,47 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    /**
+         * کیف پول کاربر
+     */
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
+
+    /**
+     * فاکتورهای کاربر
+     */
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * پرداخت‌های کاربر (از طریق relation مورف یا مستقیم)
+     * اگر Payment جدول user_id دارد
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * اگر Payment user_id نداشته باشه
+     * می‌تونیم از طریق invoices برسیم
+     */
+    public function paymentsViaInvoices()
+    {
+        return $this->hasManyThrough(
+            Payment::class,
+            Invoice::class,
+            'user_id',     // کلید خارجی در جدول Invoice
+            'payable_id',  // کلید خارجی در جدول Payment
+            'id',          // کلید محلی در جدول User
+            'id'           // کلید محلی در جدول Invoice
+        )->where('payable_type', Invoice::class);
     }
 }
