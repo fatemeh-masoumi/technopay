@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Models\Payment;
 use App\Models\Invoice;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PaymentTest extends TestCase
@@ -29,7 +27,7 @@ class PaymentTest extends TestCase
         $this->wallet = Wallet::factory()->create([
             'user_id' => $this->user->id,
             'balance' => 500000,
-            'active' => true,
+            'is_active' => true,
         ]);
 
         $this->invoice = Invoice::factory()->create([

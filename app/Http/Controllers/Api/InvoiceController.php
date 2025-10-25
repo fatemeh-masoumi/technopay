@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
 use App\Models\Invoice;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -32,13 +31,13 @@ class InvoiceController extends Controller
             return response()->json(['message' => 'این فاکتور متعلق به شما نیست'], 403);
         }
 
-        $wallet = $user->wallet;
+        $wallet = $user->wallet()->where(['is_active', 1])->lockForUpdate()->first();
 
         if ($user->blocked) {
             return response()->json(['message' => 'کاربر مسدود است'], 403);
         }
 
-        if (!$wallet || !$wallet->active) {
+        if (!$wallet || !$wallet->is_active) {
             return response()->json(['message' => 'کیف پول فعال نیست'], 403);
         }
 
